@@ -1,0 +1,70 @@
+// Prisma Schema for APIQuota SaaS
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ApiProvider {
+  id                  String         @id @default(uuid())
+  name                String
+  provider            String         // OPENAI, GEMINI, ANTHROPIC
+  encryptedKey        String         // AES-256-GCM ciphertext (iv:authTag:encryptedData)
+  keyMask             String         // Masked string, e.g. "sk-proj-...8a9F" (NEVER store plaintext)
+  totalQuota          Float          @default(100.0)
+  usedQuota           Float          @default(0.0)
+  remainingPercentage Float          @default(100.0)
+  alertThreshold      Float          @default(20.0)
+  status              String         @default("HEALTHY") // HEALTHY, WARNING, CRITICAL, ERROR
+  lastSyncedAt        DateTime?
+  lastAlertSentAt     DateTime?
+  isActive            Boolean        @default(true)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  usageHistory        UsageHistory[]
+  alertLogs           AlertLog[]
+
+  @@index([provider])
+  @@index([status])
+}
+
+model UsageHistory {
+  id                  String      @id @default(uuid())
+  providerId          String
+  provider            ApiProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  recordedAt          DateTime    @default(now())
+  usedQuota           Float
+  totalQuota          Float
+  remainingPercentage Float
+
+  @@index([providerId, recordedAt])
+}
+
+model NotificationConfig {
+  id                 String   @id @default("default-config")
+  telegramBotToken   String?
+  telegramChatId     String?
+  whatsappWebhookUrl String?
+  whatsappPhone      String?
+  defaultThreshold   Float    @default(20.0)
+  isEnabled          Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model AlertLog {
+  id         String      @id @default(uuid())
+  providerId String
+  provider   ApiProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  channel    String      // TELEGRAM, WHATSAPP
+  message    String
+  status     String      // SENT, FAILED
+  createdAt  DateTime    @default(now())
+
+  @@index([providerId])
+  @@index([createdAt])
+}
