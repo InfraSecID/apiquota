@@ -2,6 +2,7 @@ import axios from 'axios';
 import { PrismaClient } from '@prisma/client';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
+import { NotificationService } from './notifications';
 
 const prisma = new PrismaClient();
 
@@ -41,10 +42,13 @@ export class AlertService {
 
     let alertDispatched = false;
 
-    // 1. Telegram Dispatch
+    // 1. Telegram Dispatch using callmebot-notifier
     if (telegramToken && telegramChatId) {
       const message = this.formatTelegramMessage(payload);
-      const success = await this.sendTelegramAlert(telegramToken, telegramChatId, message);
+      const success = await NotificationService.sendTelegram(message, {
+        botToken: telegramToken,
+        chatId: telegramChatId,
+      });
       
       await prisma.alertLog.create({
         data: {
@@ -87,23 +91,10 @@ export class AlertService {
   }
 
   /**
-   * Dispatches message to Telegram Bot API
+   * Dispatches message to Telegram via callmebot-notifier
    */
   public static async sendTelegramAlert(botToken: string, chatId: string, text: string): Promise<boolean> {
-    try {
-      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-      await axios.post(url, {
-        chat_id: chatId,
-        text,
-        parse_mode: 'Markdown',
-        disable_web_page_preview: true,
-      }, { timeout: 8000 });
-      logger.info(`Telegram alert successfully delivered to chat_id: ${chatId}`);
-      return true;
-    } catch (err: any) {
-      logger.error(`Failed to dispatch Telegram message: ${err.response?.data?.description || err.message}`);
-      return false;
-    }
+    return NotificationService.sendTelegram(text, { botToken, chatId });
   }
 
   /**

@@ -12,27 +12,47 @@
     "prisma:seed": "tsx prisma/seed.ts",
     "test:crypto": "tsx tests/crypto.test.ts"
   },
-  "keywords": ["saas", "api-quota", "security", "aes-256-gcm", "prisma", "helmet"],
+  "keywords": [
+    "saas",
+    "api-quota",
+    "security",
+    "aes-256-gcm",
+    "prisma",
+    "helmet"
+  ],
   "author": "APIQuota Team",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "axios": "^1.7.7",
+    "bcryptjs": "^3.0.3",
+    "callmebot-notifier": "^1.11.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
     "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.3",
     "node-cron": "^3.0.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.7.4",
     "@types/node-cron": "^3.0.11",
     "prisma": "^5.20.0",
     "tsx": "^4.19.1",
     "typescript": "^5.6.2"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "@prisma/engines@5.22.0": true,
+    "esbuild@0.28.2": true,
+    "prisma@5.22.0": true
   }
 }

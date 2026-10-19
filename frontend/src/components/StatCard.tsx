@@ -20,33 +20,37 @@ export const StatCard: React.FC<StatCardProps> = ({
   badge,
 }) => {
   const badgeStyles = {
-    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    danger: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-    info: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+    success: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    warning: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    danger: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
+    info: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm hover:border-slate-700 transition duration-150 flex flex-col justify-between">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-slate-400">{title}</span>
-        <div className="p-2 rounded-lg bg-slate-800 text-slate-300">
+    <div className="group relative bg-[#111111] border border-neutral-800 rounded-xl p-6 transition-all duration-300 hover:border-neutral-700 hover:shadow-xl hover:shadow-black/50 flex flex-col justify-between">
+      {/* Top Header */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-xs font-mono uppercase tracking-wider text-neutral-400">{title}</span>
+        <div className="p-2 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-400 group-hover:text-emerald-400 group-hover:border-neutral-700 transition duration-300">
           <Icon className="h-4 w-4" />
         </div>
       </div>
 
-      <div className="flex items-baseline space-x-2">
-        <span className="text-2xl font-bold tracking-tight text-white">{value}</span>
-        {badge && (
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${badgeStyles[badge.variant]}`}
-          >
-            {badge.text}
-          </span>
-        )}
-      </div>
+      {/* Metric Value */}
+      <div className="space-y-1">
+        <div className="flex items-baseline space-x-2.5">
+          <span className="text-3xl font-extrabold tracking-tight text-white font-mono">{value}</span>
+          {badge && (
+            <span
+              className={`text-[11px] font-mono px-2 py-0.5 rounded-full border font-medium ${badgeStyles[badge.variant]}`}
+            >
+              {badge.text}
+            </span>
+          )}
+        </div>
 
-      {subtitle && <p className="text-xs text-slate-500 mt-2">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-neutral-400 mt-2 font-sans">{subtitle}</p>}
+      </div>
     </div>
   );
 };

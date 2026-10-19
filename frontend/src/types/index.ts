@@ -59,3 +59,10 @@ export interface NotificationConfig {
   isEnabled: boolean;
   hasTelegramBotToken?: boolean;
 }
+
+export interface User {
+  id: string;
+  email: string;
+  role: 'ADMIN' | 'VIEWER';
+  createdAt?: string;
+}
