@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 import {
   helmetSecurityMiddleware,
   corsSecurityMiddleware,
@@ -15,9 +16,10 @@ app.use(hideServerHeaders);
 app.use(corsSecurityMiddleware);
 app.use(helmetSecurityMiddleware);
 
-// 2. Body Parsers with payload size restriction (DoS mitigation)
+// 2. Body Parsers with payload size restriction (DoS mitigation) & Cookie Parser
 app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
+app.use(cookieParser());
 
 // 3. Health Check
 app.get('/health', (req: Request, res: Response) => {

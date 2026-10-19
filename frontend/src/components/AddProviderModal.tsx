@@ -82,57 +82,64 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+      <div className="bg-[#111111] border border-neutral-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-          <div className="flex items-center space-x-2">
-            <Lock className="h-5 w-5 text-emerald-400" />
-            <h3 className="text-lg font-semibold text-white">
-              {editingProvider ? 'Edit API Provider' : 'Add Monitored API Provider'}
-            </h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-emerald-400">
+              <Lock className="h-4 w-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-emerald-400 block font-semibold">
+                SECURITY VAULT
+              </span>
+              <h3 className="text-base font-bold text-white tracking-tight">
+                {editingProvider ? 'Edit API Provider' : 'Register New API Provider'}
+              </h3>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Security Banner */}
-        <div className="bg-emerald-950/30 border-b border-emerald-800/30 px-6 py-2.5 flex items-center space-x-2 text-xs text-emerald-300">
-          <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
-          <span>All API keys are encrypted at rest with AES-256-GCM and never stored in plaintext.</span>
+        <div className="bg-emerald-500/5 border-b border-emerald-500/20 px-6 py-2.5 flex items-center space-x-2 text-xs text-emerald-400 font-mono">
+          <ShieldCheck className="h-4 w-4 shrink-0" />
+          <span className="text-[11px]">Credentials encrypted via AES-256-GCM. Plaintext is never stored.</span>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-mono">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Provider Platform
+            <label className="block text-xs font-mono text-neutral-400 mb-1.5">
+              PLATFORM TYPE
             </label>
             <select
               value={provider}
               onChange={(e) => setProvider(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition font-mono"
             >
               <option value="OPENAI">OpenAI (GPT-4o, Embeddings)</option>
               <option value="GEMINI">Google Gemini (1.5 Pro, Flash)</option>
               <option value="ANTHROPIC">Anthropic (Claude 3.5 Sonnet)</option>
-              <option value="CUSTOM">Custom Provider API</option>
+              <option value="CUSTOM">Custom Provider Endpoint</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Friendly Name / Tag
+            <label className="block text-xs font-mono text-neutral-400 mb-1.5">
+              FRIENDLY NAME / TAG
             </label>
             <input
               type="text"
@@ -140,13 +147,13 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Production Backend Service"
               required
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-emerald-500 transition"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              API Key {editingProvider && <span className="text-slate-500">(Leave blank to keep existing key)</span>}
+            <label className="block text-xs font-mono text-neutral-400 mb-1.5">
+              API KEY {editingProvider && <span className="text-neutral-500">(Leave blank to keep existing key)</span>}
             </label>
             <input
               type="password"
@@ -154,17 +161,14 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
               onChange={(e) => setApiKey(e.target.value)}
               placeholder={editingProvider ? '••••••••••••••••••••••••' : 'sk-... or AIzaSy...'}
               required={!editingProvider}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 transition"
             />
-            <p className="text-[11px] text-slate-500 mt-1">
-              For demo/mocking, you can input dummy keys like <code className="text-emerald-400">sk-test-demo1234</code>.
-            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Total Budget / Quota ($)
+              <label className="block text-xs font-mono text-neutral-400 mb-1.5">
+                BUDGET / QUOTA ($)
               </label>
               <input
                 type="number"
@@ -173,12 +177,12 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
                 value={totalQuota}
                 onChange={(e) => setTotalQuota(Number(e.target.value))}
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 transition"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Alert Threshold (% Remaining)
+              <label className="block text-xs font-mono text-neutral-400 mb-1.5">
+                ALERT AT (% SISA)
               </label>
               <input
                 type="number"
@@ -187,26 +191,26 @@ export const AddProviderModal: React.FC<AddProviderModalProps> = ({
                 value={alertThreshold}
                 onChange={(e) => setAlertThreshold(Number(e.target.value))}
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+                className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:outline-none focus:border-emerald-500 transition"
               />
             </div>
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition"
+              className="px-4 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-medium border border-neutral-800 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold transition disabled:opacity-50 shadow-lg shadow-emerald-500/20"
             >
-              {loading ? 'Encrypting & Saving...' : editingProvider ? 'Update Provider' : 'Save Provider'}
+              {loading ? 'Encrypting...' : editingProvider ? 'Update Provider' : 'Save & Encrypt'}
             </button>
           </div>
         </form>

@@ -105,17 +105,24 @@ export const AlertSettingsModal: React.FC<AlertSettingsModalProps> = ({ isOpen, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+      <div className="bg-[#111111] border border-neutral-800 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-          <div className="flex items-center space-x-2">
-            <Bell className="h-5 w-5 text-amber-400" />
-            <h3 className="text-lg font-semibold text-white">Alert Dispatcher Settings</h3>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-amber-400">
+              <Bell className="h-4 w-4" />
+            </div>
+            <div>
+              <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 block font-semibold">
+                ALERT NOTIFIER
+              </span>
+              <h3 className="text-base font-bold text-white tracking-tight">Notification & Webhook Dispatcher</h3>
+            </div>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-neutral-800 transition"
           >
             <X className="h-5 w-5" />
           </button>
@@ -124,10 +131,10 @@ export const AlertSettingsModal: React.FC<AlertSettingsModalProps> = ({ isOpen, 
         {/* Status notification */}
         {statusMessage && (
           <div
-            className={`px-6 py-3 border-b flex items-center space-x-2 text-xs ${
+            className={`px-6 py-3 border-b flex items-center space-x-2 text-xs font-mono ${
               statusMessage.type === 'success'
-                ? 'bg-emerald-950/30 border-emerald-800/40 text-emerald-300'
-                : 'bg-rose-950/30 border-rose-800/40 text-rose-300'
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                : 'bg-rose-500/10 border-rose-500/20 text-rose-400'
             }`}
           >
             {statusMessage.type === 'success' ? (
@@ -142,11 +149,11 @@ export const AlertSettingsModal: React.FC<AlertSettingsModalProps> = ({ isOpen, 
         {/* Form */}
         <form onSubmit={handleSave} className="p-6 space-y-5">
           {/* Global Toggle */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800">
+          <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#0a0a0a] border border-neutral-800">
             <div>
-              <span className="text-sm font-medium text-white block">Automated Low Quota Alerts</span>
-              <span className="text-xs text-slate-400">
-                Trigger notifications when remaining quota is &lt; 20%
+              <span className="text-sm font-semibold text-white block">Automated Dispatcher Status</span>
+              <span className="text-xs text-neutral-400 font-mono">
+                Trigger alerts when quota &lt; {defaultThreshold}%
               </span>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
@@ -156,89 +163,89 @@ export const AlertSettingsModal: React.FC<AlertSettingsModalProps> = ({ isOpen, 
                 onChange={(e) => setIsEnabled(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              <div className="w-11 h-6 bg-neutral-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
             </label>
           </div>
 
           {/* Telegram Settings */}
-          <div className="border border-slate-800 rounded-xl p-4 space-y-3 bg-slate-950/40">
+          <div className="border border-neutral-800 rounded-xl p-4 space-y-3 bg-[#0a0a0a]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-sky-400">
-                Telegram Bot Integration
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-sky-400">
+                TELEGRAM BOT (via callmebot-notifier)
               </span>
               <button
                 type="button"
                 onClick={handleTestTelegram}
                 disabled={testingTelegram}
-                className="text-xs flex items-center space-x-1 text-sky-400 hover:text-sky-300 transition disabled:opacity-50"
+                className="text-xs font-mono flex items-center space-x-1 text-sky-400 hover:text-sky-300 transition disabled:opacity-50"
               >
                 <Send className="h-3 w-3" />
-                <span>{testingTelegram ? 'Testing...' : 'Test Telegram'}</span>
+                <span>{testingTelegram ? 'Sending...' : 'Test Send'}</span>
               </button>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Telegram Bot Token
+              <label className="block text-xs font-mono text-neutral-400 mb-1">
+                TELEGRAM BOT TOKEN
               </label>
               <input
                 type="password"
                 value={telegramBotToken}
                 onChange={(e) => setTelegramBotToken(e.target.value)}
                 placeholder={config?.hasTelegramBotToken ? '•••••••• (Token configured)' : 'e.g. 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ'}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+                className="w-full bg-[#111111] border border-neutral-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Telegram Chat ID
+              <label className="block text-xs font-mono text-neutral-400 mb-1">
+                TELEGRAM CHAT ID
               </label>
               <input
                 type="text"
                 value={telegramChatId}
                 onChange={(e) => setTelegramChatId(e.target.value)}
                 placeholder="e.g. -100123456789 or 987654321"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
+                className="w-full bg-[#111111] border border-neutral-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500 font-mono"
               />
             </div>
           </div>
 
           {/* WhatsApp Webhook Settings */}
-          <div className="border border-slate-800 rounded-xl p-4 space-y-3 bg-slate-950/40">
+          <div className="border border-neutral-800 rounded-xl p-4 space-y-3 bg-[#0a0a0a]">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
-                WhatsApp Webhook Gateway
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                WHATSAPP WEBHOOK GATEWAY
               </span>
               <button
                 type="button"
                 onClick={handleTestWhatsapp}
                 disabled={testingWhatsapp}
-                className="text-xs flex items-center space-x-1 text-emerald-400 hover:text-emerald-300 transition disabled:opacity-50"
+                className="text-xs font-mono flex items-center space-x-1 text-emerald-400 hover:text-emerald-300 transition disabled:opacity-50"
               >
                 <Send className="h-3 w-3" />
-                <span>{testingWhatsapp ? 'Testing...' : 'Test Webhook'}</span>
+                <span>{testingWhatsapp ? 'Sending...' : 'Test Webhook'}</span>
               </button>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Webhook URL (Evolution API / Baileys / Twilio)
+              <label className="block text-xs font-mono text-neutral-400 mb-1">
+                WEBHOOK URL
               </label>
               <input
                 type="url"
                 value={whatsappWebhookUrl}
                 onChange={(e) => setWhatsappWebhookUrl(e.target.value)}
                 placeholder="https://your-whatsapp-gateway.com/webhook"
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
+                className="w-full bg-[#111111] border border-neutral-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
               />
             </div>
           </div>
 
           {/* Default Threshold */}
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1">
-              Global Default Alert Threshold (%)
+            <label className="block text-xs font-mono text-neutral-400 mb-1">
+              DEFAULT ALERT THRESHOLD (% SISA)
             </label>
             <input
               type="number"
@@ -246,25 +253,25 @@ export const AlertSettingsModal: React.FC<AlertSettingsModalProps> = ({ isOpen, 
               max="90"
               value={defaultThreshold}
               onChange={(e) => setDefaultThreshold(Number(e.target.value))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500"
+              className="w-full bg-[#0a0a0a] border border-neutral-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
             />
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-neutral-800">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition"
+              className="px-4 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-neutral-300 text-xs font-medium border border-neutral-800 transition"
             >
               Close
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition disabled:opacity-50"
+              className="px-5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-black text-xs font-bold transition disabled:opacity-50 shadow-lg shadow-emerald-500/20"
             >
-              {loading ? 'Saving Settings...' : 'Save Settings'}
+              {loading ? 'Saving...' : 'Save Settings'}
             </button>
           </div>
         </form>

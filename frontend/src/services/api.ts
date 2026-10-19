@@ -1,4 +1,4 @@
-import { ApiProvider, DashboardSummary, NotificationConfig } from '../types';
+import { ApiProvider, DashboardSummary, NotificationConfig, User } from '../types';
 
 const API_BASE = '/api';
 
@@ -12,15 +12,55 @@ async function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export const api = {
+  // Authentication
+  async register(payload: { email: string; password: string; role?: 'ADMIN' | 'VIEWER' }): Promise<{ user: User; token: string }> {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+    return handleResponse<{ user: User; token: string }>(res);
+  },
+
+  async login(payload: { email: string; password: string }): Promise<{ user: User; token: string }> {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(payload),
+    });
+    return handleResponse<{ user: User; token: string }>(res);
+  },
+
+  async getMe(): Promise<{ user: User }> {
+    const res = await fetch(`${API_BASE}/auth/me`, {
+      credentials: 'include',
+    });
+    return handleResponse<{ user: User }>(res);
+  },
+
+  async logout(): Promise<void> {
+    const res = await fetch(`${API_BASE}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    return handleResponse<void>(res);
+  },
+
   // Dashboard
   async getDashboardSummary(): Promise<DashboardSummary> {
-    const res = await fetch(`${API_BASE}/dashboard/summary`);
+    const res = await fetch(`${API_BASE}/dashboard/summary`, {
+      credentials: 'include',
+    });
     return handleResponse<DashboardSummary>(res);
   },
 
   // Providers
   async getProviders(): Promise<ApiProvider[]> {
-    const res = await fetch(`${API_BASE}/providers`);
+    const res = await fetch(`${API_BASE}/providers`, {
+      credentials: 'include',
+    });
     return handleResponse<ApiProvider[]>(res);
   },
 
@@ -34,6 +74,7 @@ export const api = {
     const res = await fetch(`${API_BASE}/providers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     return handleResponse<ApiProvider>(res);
@@ -52,6 +93,7 @@ export const api = {
     const res = await fetch(`${API_BASE}/providers/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     return handleResponse<ApiProvider>(res);
@@ -60,6 +102,7 @@ export const api = {
   async deleteProvider(id: string): Promise<void> {
     const res = await fetch(`${API_BASE}/providers/${id}`, {
       method: 'DELETE',
+      credentials: 'include',
     });
     return handleResponse<void>(res);
   },
@@ -67,13 +110,16 @@ export const api = {
   async syncProvider(id: string): Promise<ApiProvider> {
     const res = await fetch(`${API_BASE}/providers/${id}/sync`, {
       method: 'POST',
+      credentials: 'include',
     });
     return handleResponse<ApiProvider>(res);
   },
 
   // Alert Settings
   async getAlertConfig(): Promise<NotificationConfig> {
-    const res = await fetch(`${API_BASE}/alerts/config`);
+    const res = await fetch(`${API_BASE}/alerts/config`, {
+      credentials: 'include',
+    });
     return handleResponse<NotificationConfig>(res);
   },
 
@@ -87,6 +133,7 @@ export const api = {
     const res = await fetch(`${API_BASE}/alerts/config`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     return handleResponse<NotificationConfig>(res);
@@ -101,6 +148,7 @@ export const api = {
     const res = await fetch(`${API_BASE}/alerts/test`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     const json = await res.json();

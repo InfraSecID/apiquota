@@ -1,7 +1,7 @@
 import app from './app';
 import { env } from './config/env';
 import { logger } from './utils/logger';
-import { PollerService } from './services/poller.service';
+import { startScheduler } from './services/scheduler';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -11,8 +11,8 @@ const server = app.listen(env.PORT, () => {
   logger.info(`🔒 AES-256-GCM Hardware/Software Cryptographic Engine initialized`);
   logger.info(`🛡️  Helmet CSP & Rate Limiting protection active`);
 
-  // Initialize automated cron poller
-  PollerService.initCron();
+  // Initialize automated cron scheduler (every 15 minutes)
+  startScheduler();
 });
 
 // Graceful Shutdown handler

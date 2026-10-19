@@ -1,11 +1,34 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 import { CryptoService } from '../src/services/crypto.service';
 import { maskApiKey } from '../src/utils/mask';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding APIQuota database with initial sample providers...');
+  console.log('🌱 Seeding APIQuota database with initial sample users & providers...');
+
+  // Seed default admin and viewer users
+  const defaultPasswordHash = await bcrypt.hash('Password123!', 10);
+  await prisma.user.upsert({
+    where: { email: 'admin@apiquota.dev' },
+    update: {},
+    create: {
+      email: 'admin@apiquota.dev',
+      password: defaultPasswordHash,
+      role: 'ADMIN',
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'viewer@apiquota.dev' },
+    update: {},
+    create: {
+      email: 'viewer@apiquota.dev',
+      password: defaultPasswordHash,
+      role: 'VIEWER',
+    },
+  });
 
   // Ensure default notification config exists
   await prisma.notificationConfig.upsert({
