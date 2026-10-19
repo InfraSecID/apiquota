@@ -1,4 +1,5 @@
 # 🛡️ APIQuota — Secure Multi-Provider API Quota Monitor & Alert SaaS
+<img width="1907" height="827" alt="Screenshot from 2026-10-19 22-19-18" src="https://github.com/user-attachments/assets/f1934a5e-4b74-46ed-82e4-5a8d9cd42249" />
 
 **APIQuota** is a SaaS platform for monitoring API quotas, credit usage, and remaining limits across various *AI Providers* (such as **OpenAI**, **Google Gemini**, and **Anthropic**) automatically and in *real-time*. It comes equipped with a multi-channel automatic alert system (**Telegram Bot** via `callmebot-notifier` & **WhatsApp Webhook**), session management based on **JWT with httpOnly cookies**, role-based access control (**Role-Based Access Control / RBAC: ADMIN & VIEWER**), as well as a high-grade encryption vault using **AES-256-GCM** designed with the *Security-First (Defense in Depth)* principle.
 
