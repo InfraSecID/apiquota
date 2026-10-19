@@ -1,36 +1,36 @@
 # 🛡️ APIQuota — Secure Multi-Provider API Quota Monitor & Alert SaaS
 
-**APIQuota** adalah platform SaaS pemantau kuota, penggunaan kredit, dan sisa limit API dari berbagai *AI Provider* (seperti **OpenAI**, **Google Gemini**, dan **Anthropic**) secara otomatis dan *real-time*. Dilengkapi dengan sistem peringatan otomatis multi-kanal (**Telegram Bot** melalui `callmebot-notifier` & **WhatsApp Webhook**), manajemen sesi berbasis **JWT dengan httpOnly cookie**, kontrol akses berbasis peran (**Role-Based Access Control / RBAC: ADMIN & VIEWER**), serta brankas enkripsi tingkat tinggi **AES-256-GCM** yang dirancang dengan prinsip *Security-First (Defense in Depth)*.
+**APIQuota** is a SaaS platform for monitoring API quotas, credit usage, and remaining limits across various *AI Providers* (such as **OpenAI**, **Google Gemini**, and **Anthropic**) automatically and in *real-time*. It comes equipped with a multi-channel automatic alert system (**Telegram Bot** via `callmebot-notifier` & **WhatsApp Webhook**), session management based on **JWT with httpOnly cookies**, role-based access control (**Role-Based Access Control / RBAC: ADMIN & VIEWER**), as well as a high-grade encryption vault using **AES-256-GCM** designed with the *Security-First (Defense in Depth)* principle.
 
 ---
 
-## ✨ Fitur Utama
+## ✨ Key Features
 
-- **Autentikasi JWT & Sesi Aman**:
-  - Endpoint registrasi (`POST /api/auth/register`) dan login (`POST /api/auth/login`) dengan hashing password menggunakan **bcrypt** (salt rounds = 10).
-  - Middleware `authenticate` yang memverifikasi JSON Web Token (JWT) dari header `Authorization: Bearer <token>` maupun dari *httpOnly cookie*.
-  - Penyimpanan token di sisi klien menggunakan **httpOnly cookie** (bukan `localStorage`) untuk mencegah serangan pencurian token melalui *Cross-Site Scripting (XSS)*.
-  - Komponen frontend `ProtectedRoute` yang secara otomatis mengalihkan pengguna yang belum login ke halaman login.
+- **JWT Authentication & Secure Sessions**:
+  - Registration endpoint (`POST /api/auth/register`) and login (`POST /api/auth/login`) with password hashing using **bcrypt** (salt rounds = 10).
+  - The `authenticate` middleware verifies the JSON Web Token (JWT) from the `Authorization: Bearer <token>` header as well as from the *httpOnly cookie*.
+  - Token storage on the client side uses an **httpOnly cookie** (not `localStorage`) to prevent token theft attacks through *Cross-Site Scripting (XSS)*.
+  - The frontend component `ProtectedRoute` automatically redirects users who are not logged in to the login page.
 - **Role-Based Access Control (RBAC)**:
-  - Pembagian peran pengguna menjadi **ADMIN** dan **VIEWER**.
-  - Hak cipta provider dibatasi ketat: hanya akun dengan peran **ADMIN** yang memiliki izin untuk membuat (`POST /api/providers`) dan menghapus (`DELETE /api/providers/:id`) data provider.
-- **Cron Job Sinkronisasi Otomatis**:
-  - Penjadwalan latar belakang menggunakan **node-cron** (`services/scheduler.ts`) yang berjalan setiap 15 menit (`*/15 * * * *`).
-  - Fungsi `startScheduler()` otomatis aktif saat backend server dinyalakan.
-  - Logging komprehensif pada setiap siklus eksekusi dengan penanganan error (*error isolation*) agar server tetap stabil dan tidak *crash*.
-- **Notifikasi Telegram via callmebot-notifier**:
-  - Integrasi pustaka `callmebot-notifier` di `services/notifications.ts` untuk pengiriman pesan instan ke Telegram.
-  - Dipicu secara otomatis ketika sisa kuota API provider turun di bawah nilai ambang batas (*alert threshold*, default 20%).
-  - Mengambil konfigurasi `TELEGRAM_BOT_TOKEN` dan `TELEGRAM_CHAT_ID` dari environment variables (`.env`) atau preferensi runtime.
-- **Monitoring Kuota Real-Time & Riwayat Penggunaan**:
-  - Telemetri kuota dan estimasi sisa biaya/kredit secara akurat untuk provider OpenAI, Google Gemini, Anthropic, maupun custom endpoint.
-- **Enkripsi Kredensial AES-256-GCM**:
-  - Semua API key dienkripsi saat istirahat (*at rest*) dengan kunci master 32-byte (256 bit), Initialization Vector (IV) acak per payload, dan Authentication Tag 128-bit untuk mencegah modifikasi atau tampering.
-- **Masking Kredensial**:
-  - Kunci rahasia API key **tidak pernah** dikembalikan dalam bentuk plaintext di respon API; hanya bentuk tersamar (*masked key*, misalnya `sk-proj-••••••••••••8a9F`) yang diekspos ke klien.
-- **Dashboard Modern & Redesign Dark Mode**:
-  - Antarmuka pengguna baru bertema gelap minimalis dan futuristik terinspirasi dari gaya visual portofolio modern (seperti masdika.id).
-  - Background hitam pekat (`#0a0a0a`), aksen warna cerah (neon emerald `#00ff88` / `#10b981`), tipografi sans-serif modern, teks marquee berjalan (*"MONITORING • QUOTA • ALERTS • SECURITY"*), kartu statistik besar, grafik interaktif Recharts bertema gelap, dan log riwayat peringatan status `SENT`/`FAILED`.
+  - User roles are divided into **ADMIN** and **VIEWER**.
+  - Provider rights are strictly limited: only accounts with the **ADMIN** role have permission to create (`POST /api/providers`) and delete (`DELETE /api/providers/:id`) provider data.
+- **Automatic Synchronization Cron Job**:
+  - Background scheduling using **node-cron** (`services/scheduler.ts`) that runs every 15 minutes (`*/15 * * * *`).
+  - The `startScheduler()` function is automatically activated when the backend server starts.
+  - Comprehensive logging on every execution cycle with error handling (*error isolation*) so that the server remains stable and does not *crash*.
+- **Telegram Notifications via callmebot-notifier**:
+  - Integration of the `callmebot-notifier` library in `services/notifications.ts` for sending instant messages to Telegram.
+  - Triggered automatically when the remaining API quota of a provider drops below the threshold value (*alert threshold*, default 20%).
+  - Retrieves the `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` configuration from environment variables (`.env`) or runtime preferences.
+- **Real-Time Quota Monitoring & Usage History**:
+  - Accurate quota telemetry and remaining cost/credit estimation for the OpenAI, Google Gemini, Anthropic providers, as well as custom endpoints.
+- **AES-256-GCM Credential Encryption**:
+  - All API keys are encrypted *at rest* with a 32-byte master key (256 bits), a random Initialization Vector (IV) per payload, and a 128-bit Authentication Tag to prevent modification or tampering.
+- **Credential Masking**:
+  - The secret API key is **never** returned in plaintext in the API response; only the obfuscated form (*masked key*, for example `sk-proj-••••••••••••8a9F`) is exposed to the client.
+- **Modern Dashboard & Dark Mode Redesign**:
+  - A new user interface with a minimalist and futuristic dark theme inspired by the modern portfolio visual style (such as masdika.id).
+  - A deep black background (`#0a0a0a`), bright color accents (neon emerald `#00ff88` / `#10b981`), modern sans-serif typography, a running marquee text (*"MONITORING • QUOTA • ALERTS • SECURITY"*), large statistic cards, interactive dark-themed Recharts graphs, and a history log of alerts with status `SENT`/`FAILED`.
 
 ---
 
@@ -39,42 +39,42 @@
 ### Backend
 - **Runtime**: Node.js (v18+) & TypeScript
 - **Framework**: Express.js (v4.21+)
-- **Database & ORM**: SQLite (bawaan pengembangan) / PostgreSQL (didukung penuh) melalui **Prisma ORM** (v5.22+)
-- **Security & Enkripsi**: Node.js Native `crypto` (AES-256-GCM), Helmet.js, Express Rate Limit, bcryptjs, jsonwebtoken, cookie-parser
-- **Penjadwal & Notifikasi**: `node-cron`, `callmebot-notifier`, `axios`
-- **Validasi Skema**: Zod
+- **Database & ORM**: SQLite (development default) / PostgreSQL (fully supported) via **Prisma ORM** (v5.22+)
+- **Security & Encryption**: Node.js Native `crypto` (AES-256-GCM), Helmet.js, Express Rate Limit, bcryptjs, jsonwebtoken, cookie-parser
+- **Scheduler & Notifications**: `node-cron`, `callmebot-notifier`, `axios`
+- **Schema Validation**: Zod
 
 ### Frontend
 - **Framework & Bundler**: React (v18+), TypeScript, Vite (v5.4+)
 - **Styling**: Tailwind CSS (v3.4+), PostCSS, Autoprefixer
-- **Visualisasi Grafik**: Recharts (v2.13+)
-- **Ikon**: Lucide React
+- **Chart Visualization**: Recharts (v2.13+)
+- **Icons**: Lucide React
 
 ---
 
-## 📋 Prasyarat Sistem
+## 📋 System Prerequisites
 
-Sebelum memulai, pastikan perangkat Anda telah terpasang:
-- **Node.js**: Versi `>= 18.18.0` (disarankan LTS v20 atau v22)
-- **npm**: Versi `>= 9.0.0`
+Before starting, make sure your device has the following installed:
+- **Node.js**: Version `>= 18.18.0` (LTS v20 or v22 recommended)
+- **npm**: Version `>= 9.0.0`
 - **Git**
 
 ---
 
-## 🚀 Panduan Instalasi Langkah Demi Langkah
+## 🚀 Step-by-Step Installation Guide
 
-### 1. Kloning Repositori
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/username/apiquota.git
 cd apiquota
 ```
 
-### 2. Konfigurasi Environment Variable
-Salin template konfigurasi `.env.example` ke file `.env` di folder `backend`:
+### 2. Configure Environment Variables
+Copy the `.env.example` configuration template to a `.env` file in the `backend` folder:
 ```bash
 cp .env.example backend/.env
 ```
-Buka file `backend/.env` dan sesuaikan nilainya. Contoh konfigurasi:
+Open the `backend/.env` file and adjust the values. Example configuration:
 ```env
 PORT=5000
 DATABASE_URL="file:./dev.db"
@@ -85,37 +85,37 @@ TELEGRAM_CHAT_ID=
 ```
 
 > [!TIP]
-> Untuk menghasilkan `ENCRYPTION_KEY` 64-karakter heksadesimal baru secara acak:
+> To generate a new random 64-character hexadecimal `ENCRYPTION_KEY`:
 > ```bash
 > node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 > ```
 
-### 3. Instal Dependensi Backend & Frontend
+### 3. Install Backend & Frontend Dependencies
 
 ```bash
-# Instal dependensi backend
+# Install backend dependencies
 cd backend
 npm install
 
-# Instal dependensi frontend
+# Install frontend dependencies
 cd ../frontend
 npm install
 cd ..
 ```
 
-### 4. Sinkronisasi Skema Database & Seeding
+### 4. Database Schema Synchronization & Seeding
 
-Jalankan perintah berikut di dalam direktori `backend`:
+Run the following commands inside the `backend` directory:
 ```bash
 cd backend
 
-# Sinkronkan skema Prisma ke database
+# Synchronize the Prisma schema to the database
 npx prisma db push
 
 # Generate Prisma Client TypeScript types
 npm run prisma:generate
 
-# Isi database dengan sample user (ADMIN & VIEWER), sample provider, dan riwayat
+# Fill the database with sample users (ADMIN & VIEWER), sample providers, and history
 npm run prisma:seed
 
 cd ..
@@ -123,114 +123,114 @@ cd ..
 
 ---
 
-## 🏃 Cara Menjalankan Aplikasi
+## 🏃 How to Run the Application
 
-Jalankan backend dan frontend di dua jendela terminal terpisah:
+Run the backend and frontend in two separate terminal windows:
 
 ### Terminal 1: Backend Server (Port 5000)
 ```bash
 cd backend
 npm run dev
 ```
-Backend akan berjalan di `http://localhost:5000`. Saat pertama kali aktif, scheduler otomatis dijadwalkan setiap 15 menit.
+The backend will run at `http://localhost:5000`. On first startup, the scheduler is automatically scheduled every 15 minutes.
 
 ### Terminal 2: Frontend Client (Port 5173)
 ```bash
 cd frontend
 npm run dev
 ```
-Frontend Vite akan berjalan di `http://localhost:5173`. Buka alamat tersebut di peramban Anda.
+The Vite frontend will run at `http://localhost:5173`. Open that address in your browser.
 
-> **Kredensial Akun Default (Hasil Seeding):**
-> - **Akun ADMIN**: `admin@apiquota.dev` | Password: `Password123!` *(Akses Penuh: Create, Edit, Delete, Sync Provider)*
-> - **Akun VIEWER**: `viewer@apiquota.dev` | Password: `Password123!` *(Hanya Akses Baca & Telemetri)*
-
----
-
-## 🔐 Tabel Environment Variables
-
-| Variabel | Tipe Data | Wajib | Keterangan |
-| :--- | :--- | :--- | :--- |
-| `DATABASE_URL` | String | Ya | String koneksi database SQLite (`file:./dev.db`) atau PostgreSQL (`postgresql://...`). |
-| `ENCRYPTION_KEY` | Hex String | Ya | Kunci master 32-byte (64 karakter hex) untuk enkripsi & dekripsi kredensial AES-256-GCM. |
-| `PORT` | Number | Tidak | Port jaringan backend Express (default: `5000`). |
-| `JWT_SECRET` | String | Ya | Kunci rahasia untuk tanda tangan dan validasi JSON Web Token. |
-| `TELEGRAM_BOT_TOKEN` | String | Opsional | Token Bot Telegram dari BotFather untuk notifikasi `callmebot-notifier`. |
-| `TELEGRAM_CHAT_ID` | String | Opsional | ID Obrolan/Grup Telegram target penerimaan notifikasi kuota kritis. |
+> **Default Account Credentials (Seeding Result):**
+> - **ADMIN Account**: `admin@apiquota.dev` | Password: `Password123!` *(Full Access: Create, Edit, Delete, Sync Provider)*
+> - **VIEWER Account**: `viewer@apiquota.dev` | Password: `Password123!` *(Read-Only Access & Telemetry)*
 
 ---
 
-## 📡 Daftar Endpoint API Utama
+## 🔐 Environment Variables Table
 
-### 1. Autentikasi (`/api/auth`)
-| Method | Endpoint | Akses | Deskripsi |
+| Variable | Data Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Publik | Mendaftarkan akun baru (`email`, `password`, opsional `role: ADMIN/VIEWER`). Token disimpan di httpOnly cookie. |
-| `POST` | `/api/auth/login` | Publik | Memvalidasi kredensial pengguna, menerbitkan JWT, dan menyetel httpOnly cookie. |
-| `GET` | `/api/auth/me` | Authenticated | Mengambil profil dan data peran pengguna yang sedang login. |
-| `POST` | `/api/auth/logout` | Authenticated | Menghapus httpOnly cookie sesi dan keluar. |
-
-### 2. Manajemen Provider (`/api/providers`)
-*Semua endpoint `/api/providers` dilindungi oleh middleware `authenticate`.*
-| Method | Endpoint | Akses | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/providers` | Authenticated | Mengambil daftar seluruh provider yang dimonitor (dengan masked API key). |
-| `GET` | `/api/providers/:id` | Authenticated | Mengambil detail satu provider berdasarkan ID. |
-| `POST` | `/api/providers` | **ADMIN Only** | Mendaftarkan API key baru. Plaintext langsung dienkripsi dengan AES-256-GCM sebelum disimpan. |
-| `PUT` | `/api/providers/:id` | Authenticated | Memperbarui nama, budget kuota, atau nilai ambang batas provider. |
-| `DELETE`| `/api/providers/:id` | **ADMIN Only** | Menghapus data provider beserta riwayat penggunaan dan log terkait. |
-| `POST` | `/api/providers/:id/sync` | Authenticated | Memaksa sinkronisasi langsung (*on-demand*) kuota ke server provider. |
-
-### 3. Dashboard Telemetri (`/api/dashboard`)
-| Method | Endpoint | Akses | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/dashboard/summary` | Publik / Auth | Mengambil metrik agregat kuota, data deret waktu untuk grafik Recharts, dan riwayat alert terbaru. |
-
-### 4. Pengaturan Alert (`/api/alerts`)
-| Method | Endpoint | Akses | Deskripsi |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/alerts/config` | Authenticated | Mengambil preferensi notifikasi (Telegram, Webhook, status toggle). |
-| `PUT` | `/api/alerts/config` | Authenticated | Memperbarui token Telegram bot, chat ID, atau webhook URL. |
-| `POST` | `/api/alerts/test` | Authenticated | Mengirim pesan pengujian (*test alert*) langsung ke Telegram atau WhatsApp Webhook. |
-| `GET` | `/api/alerts/logs` | Authenticated | Mengambil daftar audit trail log pengiriman notifikasi. |
+| `DATABASE_URL` | String | Yes | Database connection string for SQLite (`file:./dev.db`) or PostgreSQL (`postgresql://...`). |
+| `ENCRYPTION_KEY` | Hex String | Yes | 32-byte master key (64 hex characters) for encrypting & decrypting credentials with AES-256-GCM. |
+| `PORT` | Number | No | Network port for the Express backend (default: `5000`). |
+| `JWT_SECRET` | String | Yes | Secret key for signing and validating JSON Web Tokens. |
+| `TELEGRAM_BOT_TOKEN` | String | Optional | Telegram Bot token from BotFather for `callmebot-notifier` notifications. |
+| `TELEGRAM_CHAT_ID` | String | Optional | Target Telegram Chat/Group ID that receives critical quota notifications. |
 
 ---
 
-## 🔒 Catatan Keamanan (Security Deep Dive)
+## 📡 Main API Endpoint List
 
-1. **Enkripsi Kredensial Otentik (AES-256-GCM)**:
-   - Menggunakan mode *Galois/Counter Mode* (GCM) yang menyediakan kerahasiaan (*confidentiality*) sekaligus integritas otentikasi data (*integrity*).
-   - Setiap kali data dienkripsi, dihasilkan IV acak 16-byte yang unik.
-   - Format penyimpanan: `<IV_HEX>:<AUTH_TAG_HEX>:<CIPHERTEXT_HEX>`. Modifikasi satu bit pada ciphertext atau IV akan menggagalkan dekripsi secara langsung.
-2. **Masking Kredensial**:
-   - Plaintext API key didekripsi strictly secara temporer di memori prosesor hanya pada saat melakukan polling HTTP ke upstream AI Provider.
-   - Respon REST API selalu mengaburkan kunci (misal: `sk-proj-••••••••••••8a9F`), sehingga data sensitif tidak pernah bocor ke browser inspektor.
-3. **Autentikasi JWT & httpOnly Cookie**:
-   - Menggunakan token JWT bertanda tangan digital dengan algoritma HMAC-SHA256.
-   - Disimpan di browser melalui cookie bertanda `httpOnly: true`, `SameSite: 'lax'`, dan `secure: true` (saat mode produksi), sehingga JavaScript pihak ketiga atau script jahat XSS tidak dapat membaca token.
+### 1. Authentication (`/api/auth`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Public | Registers a new account (`email`, `password`, optional `role: ADMIN/VIEWER`). The token is stored in an httpOnly cookie. |
+| `POST` | `/api/auth/login` | Public | Validates user credentials, issues a JWT, and sets the httpOnly cookie. |
+| `GET` | `/api/auth/me` | Authenticated | Retrieves the profile and role data of the currently logged-in user. |
+| `POST` | `/api/auth/logout` | Authenticated | Deletes the session httpOnly cookie and logs out. |
+
+### 2. Provider Management (`/api/providers`)
+*All `/api/providers` endpoints are protected by the `authenticate` middleware.*
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/providers` | Authenticated | Retrieves the list of all monitored providers (with masked API key). |
+| `GET` | `/api/providers/:id` | Authenticated | Retrieves the details of a single provider by ID. |
+| `POST` | `/api/providers` | **ADMIN Only** | Registers a new API key. The plaintext is immediately encrypted with AES-256-GCM before being stored. |
+| `PUT` | `/api/providers/:id` | Authenticated | Updates the provider's name, quota budget, or threshold value. |
+| `DELETE`| `/api/providers/:id` | **ADMIN Only** | Deletes provider data along with the related usage history and logs. |
+| `POST` | `/api/providers/:id/sync` | Authenticated | Forces an immediate (*on-demand*) quota synchronization with the provider server. |
+
+### 3. Telemetry Dashboard (`/api/dashboard`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/dashboard/summary` | Public / Auth | Retrieves aggregate quota metrics, time-series data for Recharts graphs, and the latest alert history. |
+
+### 4. Alert Settings (`/api/alerts`)
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/alerts/config` | Authenticated | Retrieves notification preferences (Telegram, Webhook, toggle status). |
+| `PUT` | `/api/alerts/config` | Authenticated | Updates the Telegram bot token, chat ID, or webhook URL. |
+| `POST` | `/api/alerts/test` | Authenticated | Sends a test message (*test alert*) directly to Telegram or the WhatsApp Webhook. |
+| `GET` | `/api/alerts/logs` | Authenticated | Retrieves the audit trail list of notification delivery logs. |
+
+---
+
+## 🔒 Security Notes (Security Deep Dive)
+
+1. **Authentic Credential Encryption (AES-256-GCM)**:
+   - Uses *Galois/Counter Mode* (GCM), which provides *confidentiality* as well as data authentication *integrity*.
+   - Every time data is encrypted, a unique random 16-byte IV is generated.
+   - Storage format: `<IV_HEX>:<AUTH_TAG_HEX>:<CIPHERTEXT_HEX>`. Modifying a single bit in the ciphertext or IV will immediately cause decryption to fail.
+2. **Credential Masking**:
+   - The plaintext API key is strictly decrypted temporarily in processor memory only when performing HTTP polling to the upstream AI Provider.
+   - The REST API response always obfuscates the key (for example: `sk-proj-••••••••••••8a9F`), so sensitive data never leaks into the browser inspector.
+3. **JWT Authentication & httpOnly Cookie**:
+   - Uses digitally signed JWT tokens with the HMAC-SHA256 algorithm.
+   - Stored in the browser through a cookie marked `httpOnly: true`, `SameSite: 'lax'`, and `secure: true` (in production mode), so that third-party JavaScript or malicious XSS scripts cannot read the token.
 4. **Role-Based Access Control (RBAC)**:
-   - Validasi ketat diterapkan di tingkat middleware Express (`requireAdmin`).
-   - Upaya penulisan atau penghapusan provider oleh pengguna berlevel `VIEWER` akan langsung ditolak dengan kode status HTTP `403 Forbidden`.
-5. **Mitigasi Penolakan Layanan (DoS) & Injection**:
-   - Body parser dibatasi maksimal 16 KB.
-   - Rate limiting bertingkat melindungi rute sensitif dari serangan *brute force*.
-   - Prisma ORM menggunakan *parameterized queries* yang mengeliminasi celah SQL Injection.
+   - Strict validation is applied at the Express middleware level (`requireAdmin`).
+   - Any attempt to write or delete a provider by a `VIEWER`-level user will be immediately rejected with the HTTP status code `403 Forbidden`.
+5. **Denial of Service (DoS) & Injection Mitigation**:
+   - The body parser is limited to a maximum of 16 KB.
+   - Tiered rate limiting protects sensitive routes from *brute force* attacks.
+   - Prisma ORM uses *parameterized queries* that eliminate the SQL Injection vulnerability.
 
 ---
 
-## 🧪 Cara Pengujian Sistem
+## 🧪 How to Test the System
 
-Proyek ini dilengkapi dengan suite pengujian otomatis untuk memverifikasi keamanan kriptografi dan end-to-end API:
+This project comes with an automated testing suite to verify cryptographic security and end-to-end API behavior:
 
-### 1. Pengujian Kriptografi AES-256-GCM
-Memverifikasi fungsionalitas enkripsi, dekripsi, keacakan semantik IV, dan deteksi tampering autentikasi:
+### 1. AES-256-GCM Cryptographic Testing
+Verifies the functionality of encryption, decryption, semantic IV randomness, and authentication tampering detection:
 ```bash
 cd backend
 npm run test:crypto
 ```
 
-### 2. Pengujian End-to-End API, JWT & RBAC
-Memverifikasi header keamanan Helmet, rute terlindungi 401 unauthenticated, registrasi/login JWT, penolakan 403 bagi peran VIEWER, serta operasi penuh bagi peran ADMIN:
+### 2. End-to-End API, JWT & RBAC Testing
+Verifies the Helmet security headers, protected routes returning 401 unauthenticated, JWT registration/login, 403 rejection for the VIEWER role, as well as full operations for the ADMIN role:
 ```bash
 cd backend
 npx tsx tests/api.test.ts
@@ -238,56 +238,56 @@ npx tsx tests/api.test.ts
 
 ---
 
-## 📂 Struktur Direktori Proyek
+## 📂 Project Directory Structure
 
 ```
 apiquota/
 ├── backend/
 │   ├── prisma/
-│   │   ├── schema.prisma        # Skema Prisma (User, ApiProvider, UsageHistory, NotificationConfig, AlertLog)
-│   │   └── seed.ts              # Script pengisian data awal pengguna dan provider
+│   │   ├── schema.prisma        # Prisma Schema (User, ApiProvider, UsageHistory, NotificationConfig, AlertLog)
+│   │   └── seed.ts              # Script for seeding initial user and provider data
 │   ├── src/
-│   │   ├── config/              # Validasi variabel lingkungan Zod (env.ts)
-│   │   ├── controllers/         # Kontroler logika bisnis (auth, provider, dashboard, alert)
-│   │   ├── middleware/          # Keamanan (auth, rateLimiter, security, validate, error)
-│   │   ├── routes/              # Rute Express (auth, provider, dashboard, alert)
-│   │   ├── services/            # Service kripto, poller, scheduler (node-cron), notifications (callmebot)
-│   │   ├── utils/               # Utilitas logger, masking
-│   │   ├── app.ts               # Inisialisasi Express & middleware pipeline
-│   │   └── index.ts             # Entrypoint server & inisialisasi cron scheduler
+│   │   ├── config/              # Zod environment variable validation (env.ts)
+│   │   ├── controllers/         # Business logic controllers (auth, provider, dashboard, alert)
+│   │   ├── middleware/          # Security (auth, rateLimiter, security, validate, error)
+│   │   ├── routes/              # Express routes (auth, provider, dashboard, alert)
+│   │   ├── services/            # Crypto, poller, scheduler (node-cron), notifications (callmebot) services
+│   │   ├── utils/               # Logger, masking utilities
+│   │   ├── app.ts               # Express initialization & middleware pipeline
+│   │   └── index.ts             # Server entrypoint & cron scheduler initialization
 │   ├── tests/
 │   │   ├── api.test.ts          # E2E Backend, JWT, RBAC & API security test
-│   │   └── crypto.test.ts       # Validasi algoritma AES-256-GCM
+│   │   └── crypto.test.ts       # AES-256-GCM algorithm validation
 │   ├── package.json
 │   └── tsconfig.json
 ├── frontend/
 │   ├── src/
 │   │   ├── components/          # Navbar, StatCard, ProviderCard, UsageChart, Modals, LoginPage, ProtectedRoute
-│   │   ├── services/            # Klien HTTP api.ts dengan fetch dan httpOnly credentials
-│   │   ├── types/               # Definisi TypeScript (User, ApiProvider, DashboardSummary, dll.)
-│   │   ├── App.tsx              # Tampilan utama Dashboard masdika.id dark mode
-│   │   ├── index.css            # Styling kustom Tailwind & infinite marquee keyframes
-│   │   └── main.tsx             # Entrypoint React
+│   │   ├── services/            # HTTP client api.ts with fetch and httpOnly credentials
+│   │   ├── types/               # TypeScript definitions (User, ApiProvider, DashboardSummary, etc.)
+│   │   ├── App.tsx              # Main masdika.id dark mode Dashboard view
+│   │   ├── index.css            # Custom Tailwind styling & infinite marquee keyframes
+│   │   └── main.tsx             # React entrypoint
 │   ├── index.html
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── vite.config.ts
-├── .env.example                 # Template variabel lingkungan root
-├── LICENSE                      # Lisensi resmi MIT (Copyright (c) 2026 Hidayat)
-└── README.md                    # Dokumentasi lengkap proyek
+├── .env.example                 # Root environment variable template
+├── LICENSE                      # Official MIT License (Copyright (c) 2026 Hidayat)
+└── README.md                    # Complete project documentation
 ```
 
 ---
 
 ## ❓ Troubleshooting
 
-Tabel berikut merangkum masalah umum yang sering dihadapi, penyebab teknis, dan solusi penyelesaiannya:
+The following table summarizes common problems that are frequently encountered, their technical causes, and their solutions:
 
-| Masalah | Penyebab | Solusi |
+| Problem | Cause | Solution |
 | :--- | :--- | :--- |
-| **Port 5000 sedang dipakai (`EADDRINUSE`)** | Ada proses backend lain atau service lokal (seperti AirPlay / daemon server) yang menduduki port 5000. | Matikan proses yang menggunakan port tersebut dengan perintah `lsof -i :5000` lalu `kill -9 <PID>`, atau ubah konfigurasi `PORT=5001` di file `backend/.env`. |
-| **Prisma Migrate / Push Gagal** | File database SQLite `dev.db` terkunci oleh proses lain, atau skema Prisma mengalami *drift*. | Hentikan server yang sedang berjalan, pastikan izin direktori dapat ditulis (`chmod 755 prisma`), lalu jalankan ulang `npx prisma db push` di dalam folder `backend`. |
-| **CORS Error di Browser** | Nilai `CORS_ORIGIN` di `backend/.env` tidak sesuai dengan alamat host atau port frontend Vite. | Pastikan `CORS_ORIGIN=http://localhost:5173` telah disetel di `backend/.env` dan pastikan peramban mengakses dari origin yang sama. |
-| **JWT Expired / Sesi Berakhir** | Token autentikasi JWT telah melewati batas waktu kedaluwarsa (24 jam). | Lakukan login ulang melalui antarmuka halaman login untuk mendapatkan token JWT baru yang segar di cookie. |
-| **Telegram tidak mengirim pesan alert** | Nilai `TELEGRAM_BOT_TOKEN` atau `TELEGRAM_CHAT_ID` salah, bot belum di-start via `/start` oleh user di Telegram, atau kuota provider belum melewati threshold. | Buka bot Anda di Telegram dan kirim pesan `/start`. Verifikasi token bot via BotFather, periksa chat ID melalui bot get-id, lalu coba tombol **Test Send** di modal *Alert Settings*. |
-| **Role Forbidden (403 saat Create/Delete Provider)** | Pengguna yang sedang masuk berstatus sebagai akun dengan peran `VIEWER`. | Masuk menggunakan akun berstatus `ADMIN` (misalnya `admin@apiquota.dev` / `Password123!`), karena hak penambahan dan penghapusan kunci provider hanya diberikan kepada ADMIN. |
+| **Port 5000 is already in use (`EADDRINUSE`)** | Another backend process or a local service (such as AirPlay / a server daemon) is occupying port 5000. | Kill the process using that port with the command `lsof -i :5000` then `kill -9 <PID>`, or change the `PORT=5001` configuration in the `backend/.env` file. |
+| **Prisma Migrate / Push Fails** | The SQLite database file `dev.db` is locked by another process, or the Prisma schema has experienced *drift*. | Stop the running server, make sure the directory permissions are writable (`chmod 755 prisma`), then re-run `npx prisma db push` inside the `backend` folder. |
+| **CORS Error in the Browser** | The `CORS_ORIGIN` value in `backend/.env` does not match the host address or port of the Vite frontend. | Make sure `CORS_ORIGIN=http://localhost:5173` has been set in `backend/.env` and make sure the browser is accessing from the same origin. |
+| **JWT Expired / Session Ended** | The JWT authentication token has passed its expiration time limit (24 hours). | Log in again through the login page interface to get a fresh new JWT token in the cookie. |
+| **Telegram does not send alert messages** | The `TELEGRAM_BOT_TOKEN` or `TELEGRAM_CHAT_ID` value is wrong, the bot has not been started via `/start` by the user on Telegram, or the provider quota has not yet passed the threshold. | Open your bot on Telegram and send the `/start` message. Verify the bot token via BotFather, check the chat ID through the get-id bot, then try the **Test Send** button in the *Alert Settings* modal. |
+| **Role Forbidden (403 when Creating/Deleting a Provider)** | The user who is currently logged in is an account with the `VIEWER` role. | Log in using an account with `ADMIN` status (for example `admin@apiquota.dev` / `Password123!`), because the rights to add and delete provider keys are granted only to ADMIN. |
